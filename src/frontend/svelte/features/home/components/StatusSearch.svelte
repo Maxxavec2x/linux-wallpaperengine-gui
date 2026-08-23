@@ -68,6 +68,13 @@
 
 	onMount(() => {
 		const handleGlobalKeydown = (e: KeyboardEvent) => {
+			if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+				e.preventDefault();
+				inputElement?.focus();
+				inputElement?.select();
+				return;
+			}
+
 			const target = e.target as HTMLElement;
 			const isTyping =
 				target.tagName === 'INPUT' ||
