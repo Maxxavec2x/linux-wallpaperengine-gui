@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { fade, scale } from 'svelte/transition';
-	import { backOut } from 'svelte/easing';
 	import type { WallpaperData } from '@shared/types';
 	import Icon from '@/ui/Icon.svelte';
 	import { subscribe } from '@/features/workshop/scripts/workshop';
 	import { formatBytes } from '@/core/utils/formatHelper';
 	import DownloadedBadge from './DownloadedBadge.svelte';
+	import { getNextLoadOrder } from './scripts/imageLoadStagger';
 
 	interface Props {
 		folderName: string;
@@ -18,6 +18,7 @@
 		isDownloading: boolean;
 		percent: number;
 		isWorkshop: boolean;
+		index?: number;
 		handleSelect: () => void;
 		handleContextMenu: (e: MouseEvent) => void;
 	}
@@ -33,9 +34,42 @@
 		isDownloading,
 		percent,
 		isWorkshop,
+		index = 0,
 		handleSelect,
 		handleContextMenu
 	}: Props = $props();
+
+	let loaded = $state(false);
+	let errored = $state(false);
+	let imgEl: HTMLImageElement | null = $state(null);
+	let loadOrder: number | null = $state(null);
+
+	function assignLoadOrder() {
+		if (loadOrder === null) {
+			loadOrder = getNextLoadOrder();
+		}
+	}
+
+	function handleLoad() {
+		assignLoadOrder();
+		loaded = true;
+	}
+
+	function handleError() {
+		assignLoadOrder();
+		errored = true;
+	}
+
+	$effect(() => {
+		if (imgEl?.complete && imgEl.naturalWidth > 0) {
+			assignLoadOrder();
+			loaded = true;
+		}
+	});
+
+	let staggerDelay = $derived(
+		loadOrder !== null ? (loadOrder % 12) * 35 : (index % 10) * 20
+	);
 </script>
 
 <div
@@ -49,11 +83,28 @@
 	onclick={handleSelect}
 	oncontextmenu={handleContextMenu}
 	onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && handleSelect()}
-	in:scale={{ start: 0.98, duration: 200, easing: backOut }}
 >
 	<div class="preview-container list-thumb">
 		{#if wallpaper.previewPath}
-			<img src={wallpaper.previewPath} alt="" loading="lazy" />
+			{#if !loaded && !errored}
+				<div class="skeleton" out:fade={{ duration: 220 }}></div>
+			{/if}
+			<img
+				bind:this={imgEl}
+				src={wallpaper.previewPath}
+				alt=""
+				loading="lazy"
+				class="preview-img"
+				class:loaded
+				onload={handleLoad}
+				onerror={handleError}
+				style="transition-delay: {staggerDelay}ms"
+			/>
+			{#if errored}
+				<div class="error-fallback" in:fade={{ duration: 180 }}>
+					<Icon name="broken_image" size={20} />
+				</div>
+			{/if}
 		{:else}
 			<div class="no-preview">
 				<Icon name="image_not_supported" size={24} />
@@ -243,18 +294,63 @@
 		}
 
 		.list-thumb {
-			width: 90px;
-			height: 90px;
+			width: 110px;
+			height: 110px;
 			flex-shrink: 0;
-			border-radius: var(--radius-sm, 6px);
+			border-radius: var(--radius-sm, 8px);
 			position: relative;
 			background: rgba(0, 0, 0, 0.2);
+			overflow: hidden;
 
-			img {
+			.preview-img {
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
 				border-radius: var(--radius-sm, 6px);
+				opacity: 0;
+				transform: translateX(-8px) scale(0.98);
+				transition:
+					opacity 350ms ease,
+					transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+
+				&.loaded {
+					opacity: 1;
+					transform: translateX(0) scale(1);
+				}
+			}
+
+			.skeleton {
+				position: absolute;
+				inset: 0;
+				border-radius: var(--radius-sm, 6px);
+				background: rgba(255, 255, 255, 0.04);
+				overflow: hidden;
+
+				&::after {
+					content: '';
+					position: absolute;
+					inset: 0;
+					background: linear-gradient(
+						90deg,
+						transparent 0%,
+						rgba(255, 255, 255, 0.07) 50%,
+						transparent 100%
+					);
+					transform: translateX(-100%);
+					animation: shimmer 1.4s infinite;
+				}
+			}
+
+			.error-fallback {
+				position: absolute;
+				inset: 0;
+				border-radius: var(--radius-sm, 6px);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: rgba(0, 0, 0, 0.2);
+				color: var(--text-muted);
+				z-index: 1;
 			}
 		}
 
@@ -451,6 +547,22 @@
 				color: var(--btn-primary-bg);
 				filter: drop-shadow(0 0 8px var(--shadow-primary-glow));
 			}
+		}
+	}
+
+	@keyframes shimmer {
+		100% {
+			transform: translateX(100%);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.preview-img {
+			transition: opacity 150ms ease !important;
+			transform: none !important;
+		}
+		.skeleton::after {
+			animation: none !important;
 		}
 	}
 </style>

@@ -27,12 +27,12 @@
 >
 	<VirtualList
 		items={wallpapers}
-		itemHeight={124}
+		itemHeight={144}
 		gap={10}
 		{container}
 	>
-		{#snippet children({ visibleItems }: { visibleItems: [string, WallpaperData][] })}
-			{#each visibleItems as [folderName, wallpaper] (folderName)}
+		{#snippet children({ visibleItems, startIndex }: { visibleItems: [string, WallpaperData][]; startIndex: number })}
+			{#each visibleItems as [folderName, wallpaper], i (folderName)}
 				<WallpaperCard
 					{folderName}
 					{wallpaper}
@@ -40,6 +40,7 @@
 					{activePlaylist}
 					{onSelect}
 					{isWorkshop}
+					index={startIndex + i}
 					viewMode="list"
 				/>
 			{/each}

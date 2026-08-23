@@ -345,6 +345,7 @@
 		{isDownloading}
 		{percent}
 		{isWorkshop}
+		{index}
 		{handleSelect}
 		{handleContextMenu}
 	/>
