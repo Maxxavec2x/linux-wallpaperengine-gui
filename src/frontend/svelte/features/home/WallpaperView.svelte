@@ -2,6 +2,7 @@
 	import Sidebar from '@/features/home/components/Sidebar.svelte';
 	import WallpaperContainer from '@/features/home/components/WallpaperContainer.svelte';
 	import DisplayManager from '@/features/home/components/DisplayManager.svelte';
+	import DisplayBar from '@/features/home/components/DisplayBar.svelte';
 	import PlaylistManager from '@/features/home/components/PlaylistManager.svelte';
 	import { quadOut } from 'svelte/easing';
 	import { scale } from 'svelte/transition';
@@ -96,6 +97,7 @@
 					duration: 400
 				}}
 			>
+				<DisplayBar activeWallpaper={$activeWallpaper} />
 				<DisplayManager wallpapers={$wallpapers} />
 			</div>
 		{/if}

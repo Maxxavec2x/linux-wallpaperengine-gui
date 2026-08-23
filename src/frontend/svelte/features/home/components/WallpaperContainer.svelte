@@ -6,6 +6,11 @@
 	import WallpaperItemList from './WallpaperItemList.svelte';
 
 	import { activeView, showPlaylistManager } from '@/core/ui';
+	import { t } from '@/core/i18n';
+	import EmptyState from '@/ui/EmptyState.svelte';
+	import Icon from '@/ui/Icon.svelte';
+	import Button from '@/ui/Button.svelte';
+	import { fade } from 'svelte/transition';
 	import { settingsStore } from '@/features/settings/scripts/settings';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
@@ -22,7 +27,7 @@
 		FilterConfig
 	} from '@shared/types';
 	import { DEFAULT_INSTALLED_FILTER_CONFIG } from '@shared/filterConstants';
-	import { filterWallpapers } from '@/core/utils/wallpaperFilter';
+	import { filterWallpapers, searchWallpapers } from '@/core/utils/wallpaperFilter';
 	import {
 		checkSteamStatus,
 		loadInstalledFilters,
@@ -53,6 +58,7 @@
 
 	let viewMode: 'grid' | 'list' | 'detail' = 'grid';
 	let sortMethod: 'date-desc' | 'date-asc' | 'name-asc' | 'name-desc' = 'date-desc';
+	let searchQuery: string = '';
 
 	let showFilterPanel = false;
 	let installedFilters: FilterConfig | null = null;
@@ -74,8 +80,11 @@
 		$downloadProgress
 	);
 
+	// Reactive search filtering
+	$: searchedWallpapers = searchWallpapers(filteredWallpapers, searchQuery);
+
 	// Sorting logic
-	$: sortedWallpapers = Object.entries(filteredWallpapers).sort((a, b) => {
+	$: sortedWallpapers = Object.entries(searchedWallpapers).sort((a, b) => {
 		const wpA = a[1];
 		const wpB = b[1];
 		
@@ -181,6 +190,7 @@
 			bind:showFilterPanel
 			bind:viewMode
 			bind:sortMethod
+			bind:searchQuery
 			onRefresh={refreshWallpapers}
 			onLoadPlaylists={loadPlaylists}
 		/>
@@ -213,41 +223,66 @@
 					<PathWarning type="assets" delay={100} />
 				{/if}
 
-				{#if loading}
-					<div class="status-msg">Loading...</div>
-				{:else if error}
-					<div class="status-msg error">{error}</div>
-				{:else if sortedWallpapers.length === 0}
-					<div class="status-msg">
-						<p>No wallpapers found matching filters.</p>
-						<p class="hint">
-							Check your <b>Steam Search Paths</b> in
-							<button
-								class="link-btn"
-								on:click={() =>
-									activeView.set('settings')}
-								>Settings</button
-							>
-							if you expect to see more.
-						</p>
-					</div>
-				{:else if viewMode === 'grid'}
-					<WallpaperItemGrid
-						wallpapers={sortedWallpapers}
-						{selectedWallpaper}
-						{activePlaylist}
-						onSelect={selectWallpaper}
-						container={containerElement}
-					/>
-				{:else}
-					<WallpaperItemList
-						wallpapers={sortedWallpapers}
-						{selectedWallpaper}
-						{activePlaylist}
-						onSelect={selectWallpaper}
-						container={containerElement}
-					/>
+			{#if loading}
+				<div class="status-msg">Loading...</div>
+			{:else if error}
+				<div class="status-msg error">{error}</div>
+			{:else}
+				{#if sortedWallpapers.length > 0}
+					{#if viewMode === 'grid'}
+						<WallpaperItemGrid
+							wallpapers={sortedWallpapers}
+							{selectedWallpaper}
+							{activePlaylist}
+							onSelect={selectWallpaper}
+							container={containerElement}
+						/>
+					{:else}
+						<WallpaperItemList
+							wallpapers={sortedWallpapers}
+							{selectedWallpaper}
+							{activePlaylist}
+							onSelect={selectWallpaper}
+							container={containerElement}
+						/>
+					{/if}
 				{/if}
+
+				{#if sortedWallpapers.length === 0}
+					<div class="empty-overlay" transition:fade={{ duration: 200 }}>
+						{#if searchQuery.trim()}
+							<EmptyState
+								icon="search_off"
+								title={$t('wallpaper.search.noResults')}
+								description={$t('wallpaper.search.noResultsHint')}
+							>
+								<Button
+									variant="primary"
+									on:click={() => (searchQuery = '')}
+									style="padding: 10px 22px; border-radius: 12px; font-size: 0.95em;"
+								>
+									<Icon name="close" size={18} />
+									<span>{$t('wallpaper.search.clear')}</span>
+								</Button>
+							</EmptyState>
+						{:else}
+							<EmptyState icon="wallpaper" title="No wallpapers found matching filters.">
+								<svelte:fragment slot="hint">
+									<p class="empty-custom-hint">
+										Check your <b>Steam Search Paths</b> in
+										<button
+											class="link-btn"
+											on:click={() => activeView.set('settings')}
+											>Settings</button
+										>
+										if you expect to see more.
+									</p>
+								</svelte:fragment>
+							</EmptyState>
+						{/if}
+					</div>
+				{/if}
+			{/if}
 			{/if}
 		</div>
 	</div>
@@ -304,12 +339,28 @@
 			&.error {
 				color: var(--error-color);
 			}
+		}
 
-			.hint {
-				font-size: 0.8em;
-				margin-top: 12px;
-				opacity: 0.8;
-			}
+		.empty-overlay {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			pointer-events: none;
+			z-index: 10;
+			padding: 40px;
+		}
+
+		:global(.empty-overlay > *) {
+			pointer-events: auto;
+		}
+
+		.empty-custom-hint {
+			margin: 0;
+			font-size: 1em;
+			color: var(--text-muted);
+			text-align: center;
 
 			.link-btn {
 				background: none;

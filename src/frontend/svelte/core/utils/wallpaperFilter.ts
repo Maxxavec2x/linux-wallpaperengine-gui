@@ -1,5 +1,27 @@
 import type { WallpaperData, FilterConfig } from '@shared/types';
 
+export function searchWallpapers(
+	wallpapers: Record<string, WallpaperData>,
+	query: string
+): Record<string, WallpaperData> {
+	const trimmed = query.trim().toLowerCase();
+	if (!trimmed) return wallpapers;
+
+	const result: Record<string, WallpaperData> = {};
+
+	Object.entries(wallpapers).forEach(([folderName, data]) => {
+		const title = (data.projectData?.title || '').toLowerCase();
+		if (
+			title.includes(trimmed) ||
+			folderName.toLowerCase().includes(trimmed)
+		) {
+			result[folderName] = data;
+		}
+	});
+
+	return result;
+}
+
 export function filterWallpapers(
 	wallpapers: Record<string, WallpaperData>,
 	filters: FilterConfig | null,
