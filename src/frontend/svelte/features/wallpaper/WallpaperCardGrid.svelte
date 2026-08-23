@@ -5,6 +5,7 @@
 	import Icon from '@/ui/Icon.svelte';
 	import { subscribe } from '@/features/workshop/scripts/workshop';
 	import DownloadedBadge from './DownloadedBadge.svelte';
+	import { getNextLoadOrder } from './scripts/imageLoadStagger';
 
 	interface Props {
 		folderName: string;
@@ -37,6 +38,39 @@
 		handleSelect,
 		handleContextMenu
 	}: Props = $props();
+
+	let loaded = $state(false);
+	let errored = $state(false);
+	let imgEl: HTMLImageElement | null = $state(null);
+	let loadOrder: number | null = $state(null);
+
+	function assignLoadOrder() {
+		if (loadOrder === null) {
+			loadOrder = getNextLoadOrder();
+		}
+	}
+
+	function handleLoad() {
+		assignLoadOrder();
+		loaded = true;
+	}
+
+	function handleError() {
+		assignLoadOrder();
+		errored = true;
+	}
+
+	// Cached images may finish loading before onload gets attached
+	$effect(() => {
+		if (imgEl?.complete && imgEl.naturalWidth > 0) {
+			assignLoadOrder();
+			loaded = true;
+		}
+	});
+
+	let staggerDelay = $derived(
+		loadOrder !== null ? (loadOrder % 12) * 35 : (index % 10) * 20
+	);
 </script>
 
 <div
@@ -50,17 +84,28 @@
 	onclick={handleSelect}
 	oncontextmenu={handleContextMenu}
 	onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && handleSelect()}
-	in:fade={{ duration: isWorkshop ? 0 : 300 }}
-	style="animation-delay: {10 + index * 50}ms"
 >
 	<div class="preview-container">
 		{#if wallpaper.previewPath}
+			{#if !loaded && !errored}
+				<div class="skeleton" out:fade={{ duration: 220 }}></div>
+			{/if}
 			<img
+				bind:this={imgEl}
 				src={wallpaper.previewPath}
 				alt={wallpaper.projectData?.title}
 				class="preview-img"
+				class:loaded
 				loading="lazy"
+				onload={handleLoad}
+				onerror={handleError}
+				style="transition-delay: {staggerDelay}ms"
 			/>
+			{#if errored}
+				<div class="error-fallback" in:fade={{ duration: 180 }}>
+					<Icon name="broken_image" size={36} />
+				</div>
+			{/if}
 		{:else}
 			<div class="no-preview">
 				<Icon name="image_not_supported" size={80} />
@@ -154,6 +199,52 @@
 			height: 100%;
 			object-fit: cover;
 			border-radius: 12px;
+			position: relative;
+			z-index: 1;
+			opacity: 0;
+			transform: translateY(10px) scale(0.97);
+			transition:
+				opacity 350ms ease,
+				transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+
+			&.loaded {
+				opacity: 1;
+				transform: translateY(0) scale(1);
+			}
+		}
+
+		.skeleton {
+			position: absolute;
+			inset: 0;
+			border-radius: 12px;
+			background: var(--bg-surface-hover);
+			overflow: hidden;
+
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(
+					90deg,
+					transparent 0%,
+					rgba(255, 255, 255, 0.07) 50%,
+					transparent 100%
+				);
+				transform: translateX(-100%);
+				animation: shimmer 1.4s infinite;
+			}
+		}
+
+		.error-fallback {
+			position: absolute;
+			inset: 0;
+			border-radius: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: var(--bg-surface-hover);
+			color: var(--text-muted);
+			z-index: 1;
 		}
 
 		.no-preview {
@@ -318,6 +409,22 @@
 		}
 		to {
 			transform: translateX(-50%);
+		}
+	}
+
+	@keyframes shimmer {
+		100% {
+			transform: translateX(100%);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.preview-img {
+			transition: opacity 150ms ease !important;
+			transform: none !important;
+		}
+		.skeleton::after {
+			animation: none !important;
 		}
 	}
 </style>
