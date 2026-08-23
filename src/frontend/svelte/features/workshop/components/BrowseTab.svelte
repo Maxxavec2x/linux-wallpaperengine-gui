@@ -24,6 +24,7 @@
 	let currentPageNum: number = currentPage;
 
 	$: currentPageNum = currentPage;
+	$: isPerformanceMode = !!$settingsStore?.performanceMode;
 
 	function handleItemSelect(
 		folderName: string,
@@ -97,7 +98,7 @@
 				<div
 					class="loading"
 					in:fade={{
-						duration: 200
+						duration: isPerformanceMode ? 0 : 200
 					}}
 				>
 					<div class="spinner"></div>
@@ -112,10 +113,10 @@
 					class="results-container"
 					in:fly={{
 						y: 20,
-						duration: 400,
-						delay: 100
+						duration: isPerformanceMode ? 0 : 400,
+						delay: isPerformanceMode ? 0 : 100
 					}}
-					out:fade={{ duration: 200 }}
+					out:fade={{ duration: isPerformanceMode ? 0 : 200 }}
 				>
 					{#if viewMode === 'grid'}
 						<WallpaperItemGrid
@@ -171,6 +172,7 @@
 		display: flex;
 		overflow: visible;
 		margin-top: 10px;
+		min-width: 0;
 
 		.browse-content {
 			flex: 1;
@@ -178,6 +180,7 @@
 			flex-direction: column;
 			overflow: hidden;
 			position: relative;
+			min-width: 0;
 
 			.scroll-container {
 				flex: 1;
@@ -188,6 +191,7 @@
 				position: relative;
 				padding: 10px;
 				overflow-x: hidden;
+				min-width: 0;
 
 				&.scroll-mask {
 					mask-image: linear-gradient(

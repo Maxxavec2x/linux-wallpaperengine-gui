@@ -43,7 +43,11 @@
 		"scrollMask": "Затухание по краям при прокрутке",
 		"scrollMaskDesc": "Плавное затухание сверху и снизу области прокрутки. (На слабых системах может снижать плавность.)",
 		"hideTrayLabel": "Скрыть подпись в лотке",
-		"hideTrayLabelDesc": "Показывать в системном лотке только значок, без надписи «Linux Wallpaper Engine»."
+		"hideTrayLabelDesc": "Показывать в системном лотке только значок, без надписи «Linux Wallpaper Engine».",
+		"gridWarpAnimation": "[NYT_RU] Grid Warp Animation",
+		"gridWarpAnimationDesc": "[NYT_RU] Animate grid items smoothly when the layout wraps to new rows on resize or filter.",
+		"performanceMode": "[NYT_RU] Performance Mode",
+		"performanceModeDesc": "[NYT_RU] Disable heavy animations, shimmer effects, and backdrop blur for better performance."
 	},
 	"generalScaling": {
 		"default": "По умолчанию",

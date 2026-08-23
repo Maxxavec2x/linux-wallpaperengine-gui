@@ -32,8 +32,17 @@
 	let appReady = false;
 	let lastCheckPaths = '';
 
+	$: isPerformanceMode = !!$settingsStore?.performanceMode;
+
 	$: {
 		applyDynamicTheme($selectedWallpaper, $settingsStore);
+	}
+
+	$: {
+		document.documentElement.classList.toggle(
+			'performance-mode',
+			isPerformanceMode
+		);
 	}
 
 	$: {
@@ -69,14 +78,29 @@
 </script>
 
 {#if appReady}
-	<div class="app-container" in:fade={{ duration: 600 }}>
-		<div in:fly={{ y: -40, duration: 800, delay: 150, easing: backOut }}>
+	<div
+		class="app-container"
+		in:fade={{ duration: isPerformanceMode ? 0 : 600 }}
+	>
+		<div
+			in:fly={{
+				y: -40,
+				duration: isPerformanceMode ? 0 : 800,
+				delay: isPerformanceMode ? 0 : 150,
+				easing: backOut
+			}}
+		>
 			<Topbar />
 		</div>
 
 		<div
 			class="content"
-			in:fly={{ y: 30, duration: 800, delay: 350, easing: cubicOut }}
+			in:fly={{
+				y: 30,
+				duration: isPerformanceMode ? 0 : 800,
+				delay: isPerformanceMode ? 0 : 350,
+				easing: cubicOut
+			}}
 		>
 			<svelte:component this={viewComponents[$activeView]} />
 		</div>
@@ -84,16 +108,29 @@
 {/if}
 
 <div class="toast-stack">
-	{#each $toastStore as toast (toast.id)}
-		<div animate:flip={{ duration: 300 }}>
-			<Toast 
-				id={toast.id}
-				message={toast.message} 
-				type={toast.type} 
-				duration={toast.duration}
-			/>
-		</div>
-	{/each}
+	{#if isPerformanceMode}
+		{#each $toastStore as toast (toast.id)}
+			<div>
+				<Toast
+					id={toast.id}
+					message={toast.message}
+					type={toast.type}
+					duration={toast.duration}
+				/>
+			</div>
+		{/each}
+	{:else}
+		{#each $toastStore as toast (toast.id)}
+			<div animate:flip={{ duration: 300 }}>
+				<Toast
+					id={toast.id}
+					message={toast.message}
+					type={toast.type}
+					duration={toast.duration}
+				/>
+			</div>
+		{/each}
+	{/if}
 </div>
 
 <ContextMenu />

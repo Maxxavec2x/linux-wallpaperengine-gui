@@ -15,6 +15,12 @@
 		"nameAsc": "По имени (А-Я)",
 		"nameDesc": "По имени (Я-А)"
 	},
+	"search": {
+		"placeholder": "[NYT_RU] Search wallpapers...",
+		"noResults": "[NYT_RU] No wallpapers found matching your search.",
+		"noResultsHint": "[NYT_RU] Try a different keyword or clear the search.",
+		"clear": "[NYT_RU] Clear search"
+	},
 	"properties": {
 		"title": "Свойства",
 		"loading": "Загрузка свойств…",

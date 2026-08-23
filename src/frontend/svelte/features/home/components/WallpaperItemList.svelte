@@ -6,8 +6,10 @@
 		Wallpaper,
 		Playlist
 	} from '@shared/types';
-
+	import { settingsStore } from '@/features/settings/scripts/settings';
 	import VirtualList from '@/ui/VirtualList.svelte';
+
+	$: isPerformanceMode = !!$settingsStore?.performanceMode;
 
 	export let wallpapers: [string, WallpaperData][] = [];
 	export let selectedWallpaper: Wallpaper | null = null;
@@ -22,17 +24,21 @@
 
 <div
 	class="wallpaper-list-wrapper"
-	in:fly={{ x: 20, delay: 200, duration: 200 }}
-	out:fly={{ x: 20, duration: 200 }}
+	in:fly={{
+		x: 20,
+		delay: isPerformanceMode ? 0 : 200,
+		duration: isPerformanceMode ? 0 : 200
+	}}
+	out:fly={{ x: 20, duration: isPerformanceMode ? 0 : 200 }}
 >
 	<VirtualList
 		items={wallpapers}
-		itemHeight={124}
+		itemHeight={144}
 		gap={10}
 		{container}
 	>
-		{#snippet children({ visibleItems }: { visibleItems: [string, WallpaperData][] })}
-			{#each visibleItems as [folderName, wallpaper] (folderName)}
+		{#snippet children({ visibleItems, startIndex }: { visibleItems: [string, WallpaperData][]; startIndex: number })}
+			{#each visibleItems as [folderName, wallpaper], i (folderName)}
 				<WallpaperCard
 					{folderName}
 					{wallpaper}
@@ -40,6 +46,7 @@
 					{activePlaylist}
 					{onSelect}
 					{isWorkshop}
+					index={startIndex + i}
 					viewMode="list"
 				/>
 			{/each}

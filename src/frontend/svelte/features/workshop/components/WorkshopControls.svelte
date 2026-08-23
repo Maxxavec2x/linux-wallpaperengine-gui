@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Input from '@/ui/Input.svelte';
 	import Button from '@/ui/Button.svelte';
 	import Select from '@/ui/Select.svelte';
@@ -7,6 +8,20 @@
 	import Toolbar from '@/ui/layout/Toolbar.svelte';
 	import ViewToggle from '@/ui/ViewToggle.svelte';
 	import { t } from '@/core/i18n';
+
+	onMount(() => {
+		const handleGlobalKeydown = (e: KeyboardEvent) => {
+			if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+				e.preventDefault();
+				const el = document.getElementById('workshop-search-input') as HTMLInputElement | null;
+				el?.focus();
+				el?.select();
+			}
+		};
+
+		window.addEventListener('keydown', handleGlobalKeydown);
+		return () => window.removeEventListener('keydown', handleGlobalKeydown);
+	});
 
 	export let searchText = '';
 	export let sortOrder = '0';
@@ -57,6 +72,7 @@
 
 		<div class="search-input-wrap">
 			<Input
+				id="workshop-search-input"
 				type="text"
 				placeholder={$t('workshop.controls.searchPlaceholder')}
 				bind:value={searchText}
@@ -129,6 +145,17 @@
 		.search-input-wrap {
 			flex: 1;
 			max-width: 300px;
+
+			:global(.input-wrapper input) {
+				padding: 8px 12px;
+				height: 36px;
+				box-sizing: border-box;
+			}
+		}
+
+		:global(.btn) {
+			height: 36px;
+			box-sizing: border-box;
 		}
 	}
 
@@ -149,6 +176,12 @@
 				white-space: nowrap;
 			}
 		}
+
+		:global(.select-trigger) {
+			padding: 8px 12px;
+			height: 36px;
+			box-sizing: border-box;
+		}
 	}
 
 	.right-actions {
@@ -168,6 +201,12 @@
 
 		.mode-toggle-wrap {
 			margin-right: 10px;
+
+			:global(.capsule-container) {
+				height: 36px;
+				box-sizing: border-box;
+				padding: 3px;
+			}
 		}
 
 		.toggle-wrap {

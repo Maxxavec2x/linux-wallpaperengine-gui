@@ -11,7 +11,7 @@
 	let { log, index, searchQuery, wrapText }: Props = $props();
 </script>
 
-<div class="log-line {log.level}">
+<div class="log-line {log.level}" class:wrap={wrapText}>
 	<span class="line-no">{index + 1}</span>
 	<!-- svelte-ignore a11y_missing_attribute -->
 	<span class="log-time" title={log.dateOnly}>{log.timeOnly || 'N/A'}</span>
@@ -26,50 +26,48 @@
 <style lang="scss">
 	.log-line {
 		display: flex;
-		padding: 2px 8px;
-		border-radius: 2px;
-		transition: background-color 0.1s ease;
+		padding: 4px 8px;
+		border-radius: 4px;
+		border-left: 3px solid transparent;
+		transition: background-color 0.1s ease, border-color 0.1s ease;
 		font-family: 'JetBrains Mono', 'Fira Code', 'Fira Mono', Consolas, Monaco, monospace;
 		font-size: 0.75rem;
 		line-height: 1.5;
+		width: 100%;
+		box-sizing: border-box;
+
+		&:not(.wrap) {
+			width: max-content;
+			min-width: 100%;
+		}
 
 		&:hover {
 			background-color: rgba(255, 255, 255, 0.04);
 		}
 
 		&.error {
-			background-color: var(--error-bg-translucent, rgba(220, 53, 69, 0.15));
+			border-left-color: var(--error-color, #ff3131);
+			background-color: rgba(220, 53, 69, 0.06);
 			
 			&:hover {
-				background-color: color-mix(in srgb, var(--error-bg, #dc3545), transparent 80%);
-			}
-			
-			.line-content {
-				color: var(--error-color, #ff3131);
+				background-color: rgba(220, 53, 69, 0.1);
 			}
 		}
 
 		&.warning {
-			background-color: color-mix(in srgb, var(--warn-bg, #ffc107), transparent 85%);
+			border-left-color: var(--warn-bg, #ffc107);
+			background-color: rgba(255, 193, 7, 0.06);
 			
 			&:hover {
-				background-color: color-mix(in srgb, var(--warn-bg, #ffc107), transparent 80%);
-			}
-			
-			.line-content {
-				color: color-mix(in srgb, var(--warn-bg, #ffc107), white 20%);
+				background-color: rgba(255, 193, 7, 0.1);
 			}
 		}
 
 		&.success {
-			background-color: color-mix(in srgb, var(--success-bg, #28a745), transparent 85%);
-			
+			border-left-color: var(--success-bg, #28a745);
+			/* keep success subtle — no full tint, just left bar */
 			&:hover {
-				background-color: color-mix(in srgb, var(--success-bg, #28a745), transparent 80%);
-			}
-
-			.line-content {
-				color: color-mix(in srgb, var(--success-bg, #28a745), white 30%);
+				background-color: rgba(255, 255, 255, 0.03);
 			}
 		}
 	}

@@ -72,6 +72,8 @@ type AppConfig struct {
 	HookEnabled              bool           `json:"hookEnabled"`
 	HideTrayLabel            bool           `json:"hideTrayLabel"`
 	WallpaperChangeCommand   string         `json:"wallpaperChangeCommand,omitempty"`
+	EnableGridWarpAnimation  bool           `json:"enableGridWarpAnimation,omitempty"`
+	PerformanceMode          bool           `json:"performanceMode,omitempty"`
 
 	// Fixed Filters
 	InstalledFilters *FilterConfig `json:"installedFilters,omitempty"`

@@ -43,7 +43,11 @@
 		"scrollMask": "เอฟเฟกต์มาสก์การเลื่อน",
 		"scrollMaskDesc": "เปิดเอฟเฟกต์เฟดที่ด้านบนและล่างของพื้นที่เลื่อน (หมายเหตุ: อาจกระทบประสิทธิภาพในบางระบบ)",
 		"hideTrayLabel": "ซ่อนข้อความในถาดระบบ",
-		"hideTrayLabelDesc": "แสดงเฉพาะไอคอนในถาดระบบ และซ่อนข้อความ “Linux Wallpaper Engine”"
+		"hideTrayLabelDesc": "แสดงเฉพาะไอคอนในถาดระบบ และซ่อนข้อความ “Linux Wallpaper Engine”",
+		"gridWarpAnimation": "อนิเมชั่นการจัดเรียง wallpaper",
+		"gridWarpAnimationDesc": "แสดงอนิเมชั่นการจัดเรียง wallpaper เมื่อจัดแถวใหม่จากการย่อ/ขยายหน้าต่างหรือการกรอง",
+		"performanceMode": "โหมดประสิทธิภาพ",
+		"performanceModeDesc": "ปิดภาพเคลื่อนไหวหนักๆ เอฟเฟกต์แสงระยิบระยับ และการเบลอพื้นหลัง เพื่อให้ใช้งานได้ลื่นขึ้นและกินทรัพยากรน้อยลง"
 	},
 	"generalScaling": {
 		"default": "ค่าเริ่มต้น",

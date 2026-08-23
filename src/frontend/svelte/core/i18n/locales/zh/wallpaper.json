@@ -15,6 +15,12 @@
 		"nameAsc": "名称 (A-Z)",
 		"nameDesc": "名称 (Z-A)"
 	},
+	"search": {
+		"placeholder": "[NYT_ZH] Search wallpapers...",
+		"noResults": "[NYT_ZH] No wallpapers found matching your search.",
+		"noResultsHint": "[NYT_ZH] Try a different keyword or clear the search.",
+		"clear": "[NYT_ZH] Clear search"
+	},
 	"properties": {
 		"title": "属性",
 		"loading": "正在加载属性...",

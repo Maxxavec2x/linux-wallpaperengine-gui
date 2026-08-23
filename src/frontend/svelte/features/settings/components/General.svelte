@@ -250,4 +250,26 @@
 			bind:checked={$settingsStore.hideTrayLabel}
 		/>
 	</SettingItem>
+
+	<SettingItem
+		label={$t('settings.general.gridWarpAnimation')}
+		id="enableGridWarpAnimation"
+		description={$t('settings.general.gridWarpAnimationDesc')}
+	>
+		<Toggle
+			id="enableGridWarpAnimation"
+			bind:checked={$settingsStore.enableGridWarpAnimation}
+		/>
+	</SettingItem>
+
+	<SettingItem
+		label={$t('settings.general.performanceMode')}
+		id="performanceMode"
+		description={$t('settings.general.performanceModeDesc')}
+	>
+		<Toggle
+			id="performanceMode"
+			bind:checked={$settingsStore.performanceMode}
+		/>
+	</SettingItem>
 {/if}

@@ -49,6 +49,8 @@ export interface SettingsState {
 	hookEnabled: boolean;
 	hideTrayLabel: boolean;
 	wallpaperChangeCommand: string;
+	enableGridWarpAnimation: boolean;
+	performanceMode: boolean;
 }
 
 export const settingsStore: Writable<SettingsState | null> = writable(null);
@@ -91,6 +93,8 @@ const configFieldMap: Record<string, string> = {
 	hookEnabled: "hookEnabled",
 	hideTrayLabel: "hideTrayLabel",
 	wallpaperChangeCommand: "wallpaperChangeCommand",
+	enableGridWarpAnimation: "enableGridWarpAnimation",
+	performanceMode: "performanceMode",
 };
 
 // Settings Actions
@@ -113,6 +117,8 @@ export async function loadSettings(): Promise<void> {
 			if (settings.fullscreenPauseIgnoreAppIds === undefined) settings.fullscreenPauseIgnoreAppIds = [];
 			if (settings.playlist === undefined) settings.playlist = '';
 			if (settings.playlistInterval === undefined) settings.playlistInterval = 0;
+			if (settings.enableGridWarpAnimation === undefined) settings.enableGridWarpAnimation = true;
+			if (settings.performanceMode === undefined) settings.performanceMode = false;
 
 			settingsStore.set(settings as SettingsState);
 		} else {

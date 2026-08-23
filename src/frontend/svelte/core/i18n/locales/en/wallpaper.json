@@ -15,6 +15,12 @@
 		"nameAsc": "Name (A-Z)",
 		"nameDesc": "Name (Z-A)"
 	},
+	"search": {
+		"placeholder": "Search wallpapers...",
+		"noResults": "No wallpapers found matching your search.",
+		"noResultsHint": "Try a different keyword or clear the search.",
+		"clear": "Clear search"
+	},
 	"properties": {
 		"title": "Properties",
 		"loading": "Loading properties...",

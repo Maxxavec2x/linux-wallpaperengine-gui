@@ -3,9 +3,10 @@
 	export let title: string = '';
 	export let showRefresh: boolean = false;
 	export let onRefresh: () => void = () => {};
+	export let fillLeft: boolean = false;
 </script>
 
-<div class="toolbar">
+<div class="toolbar" class:fill-left={fillLeft}>
 	<div class="left-actions">
 		<slot name="left" />
 		{#if title}
@@ -36,7 +37,7 @@
 		align-items: center;
 		background: var(--top-bar-bg);
 		border-radius: 20px;
-		gap: 15px;
+		gap: 8px;
 		width: 100%;
 		box-sizing: border-box;
 		flex-shrink: 0;
@@ -46,6 +47,10 @@
 			align-items: center;
 			gap: 10px;
 			flex: 1;
+		}
+
+		&.fill-left .right-actions {
+			flex: 0 0 auto;
 		}
 
 		.left-actions {
@@ -61,6 +66,7 @@
 			align-items: center;
 			justify-content: center;
 			flex: 0 1 auto;
+			min-width: 0;
 		}
 
 		.toolbar-title {
