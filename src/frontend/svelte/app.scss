@@ -210,7 +210,30 @@ hr {
      animation: spin 1s linear infinite;
 }
 
-::selection {
+ ::selection {
 	background-color: var(--btn-primary-bg, #007bff);
 	color: #ffffff;
+}
+
+html.performance-mode {
+	--transition-base: none;
+	--transition-slow: none;
+}
+
+// Disable heavy card animations in performance mode
+html.performance-mode .preview-img {
+	transition: none !important;
+	transform: none !important;
+}
+
+html.performance-mode .skeleton::after {
+	display: none !important;
+}
+
+// Solid backgrounds instead of blur in performance mode
+html.performance-mode .options-dropdown,
+html.performance-mode .context-menu {
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+	background: var(--bg-surface) !important;
 }

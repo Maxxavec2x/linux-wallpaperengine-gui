@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { type Snippet } from 'svelte';
+		import { type Snippet } from 'svelte';
+	import { settingsStore } from '@/features/settings/scripts/settings';
+	import { captureRects, animateWarp } from './scripts/gridWarp';
 
 	interface Props {
 		items: any[];
@@ -25,6 +27,7 @@
 	let scrollTop = $state(0);
 	let viewportHeight = $state(0);
 	let viewportElement: HTMLElement | null = $state(null);
+	let gridContentEl: HTMLElement | null = $state(null);
 
 	// Calculate how many items can actually fit in the available width
 	let itemsPerRow = $derived(
@@ -121,6 +124,33 @@
 		resizeObserver.observe(viewportElement);
 		return () => resizeObserver.disconnect();
 	});
+
+	// Resize warp: animate:flip only fires on list reorder, so we manually animate on column-count change
+	let previousRectsByKey = new Map<string, DOMRect>();
+	let isFirstRender = true;
+	let isWarpEnabled = $derived(
+		!$settingsStore?.performanceMode && ($settingsStore?.enableGridWarpAnimation ?? true)
+	);
+
+	$effect.pre(() => {
+		items;
+		itemsPerRow;
+		if (!isWarpEnabled) return;
+		if (isFirstRender || !gridContentEl) return;
+		previousRectsByKey = captureRects(gridContentEl);
+	});
+
+	$effect(() => {
+		items;
+		itemsPerRow;
+		if (!isWarpEnabled) return;
+		if (isFirstRender) {
+			isFirstRender = false;
+			return;
+		}
+		if (!gridContentEl || previousRectsByKey.size === 0) return;
+		animateWarp(gridContentEl, previousRectsByKey).then(() => previousRectsByKey.clear());
+	});
 </script>
 
 <div
@@ -129,6 +159,7 @@
 	style="height: {totalHeight}px; position: relative; width: 100%;"
 >
 	<div
+		bind:this={gridContentEl}
 		class="virtual-grid-content"
 		style="
             position: absolute;
@@ -148,10 +179,17 @@
 <style>
 	.virtual-grid-viewport {
 		pointer-events: none;
-		min-width: 100%;
+		min-width: 0;
 		flex: 1;
 	}
 	.virtual-grid-content {
 		pointer-events: auto;
+		min-width: 0;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.virtual-grid-content [data-flip-key] {
+			animation: none !important;
+		}
 	}
 </style>

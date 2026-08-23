@@ -5,6 +5,7 @@
 	import { subscribe } from '@/features/workshop/scripts/workshop';
 	import { formatBytes } from '@/core/utils/formatHelper';
 	import DownloadedBadge from './DownloadedBadge.svelte';
+	import { settingsStore } from '@/features/settings/scripts/settings';
 	import { getNextLoadOrder } from './scripts/imageLoadStagger';
 
 	interface Props {
@@ -67,8 +68,13 @@
 		}
 	});
 
+	let isPerformanceMode = $derived(!!$settingsStore?.performanceMode);
 	let staggerDelay = $derived(
-		loadOrder !== null ? (loadOrder % 12) * 35 : (index % 10) * 20
+		isPerformanceMode
+			? 0
+			: loadOrder !== null
+				? (loadOrder % 12) * 35
+				: (index % 10) * 20
 	);
 </script>
 
@@ -86,7 +92,7 @@
 >
 	<div class="preview-container list-thumb">
 		{#if wallpaper.previewPath}
-			{#if !loaded && !errored}
+			{#if !loaded && !errored && !isPerformanceMode}
 				<div class="skeleton" out:fade={{ duration: 220 }}></div>
 			{/if}
 			<img
@@ -101,7 +107,7 @@
 				style="transition-delay: {staggerDelay}ms"
 			/>
 			{#if errored}
-				<div class="error-fallback" in:fade={{ duration: 180 }}>
+				<div class="error-fallback" in:fade={{ duration: isPerformanceMode ? 0 : 180 }}>
 					<Icon name="broken_image" size={20} />
 				</div>
 			{/if}
@@ -115,7 +121,11 @@
 		{/if}
 
 		{#if wallpaper.projectData?.approved}
-			<div class="badge approved" title="Approved" in:scale>
+			<div
+				class="badge approved"
+				title="Approved"
+				in:scale={{ duration: isPerformanceMode ? 0 : 200, start: 0.8 }}
+			>
 				<Icon name="emoji_events" size={22} />
 			</div>
 		{/if}
@@ -189,7 +199,7 @@
 	<div class="actions">
 		{#if isWorkshop || isWorkshopItem}
 			{#if isDownloading && !isDownloaded}
-				<div class="list-progress" in:fade>
+				<div class="list-progress" in:fade={{ duration: isPerformanceMode ? 0 : 200 }}>
 					<div class="wave-bg" style="height: {percent}%"></div>
 					<div class="pct-text">
 						{#if percent === 0}
@@ -200,11 +210,19 @@
 					</div>
 				</div>
 			{:else if isDownloaded}
-				<div class="status-icon downloaded" in:scale title="Downloaded">
+				<div
+					class="status-icon downloaded"
+					in:scale={{ duration: isPerformanceMode ? 0 : 200, start: 0.8 }}
+					title="Downloaded"
+				>
 					<Icon name="cloud_done" size={22} />
 				</div>
 			{:else if isSubscribed}
-				<div class="status-icon subscribed" in:scale title="Subscribed">
+				<div
+					class="status-icon subscribed"
+					in:scale={{ duration: isPerformanceMode ? 0 : 200, start: 0.8 }}
+					title="Subscribed"
+				>
 					<Icon name="cloud_download" size={22} />
 				</div>
 			{:else}
@@ -226,7 +244,10 @@
 				</button>
 			{/if}
 		{:else if selected}
-			<div class="active-indicator" in:scale>
+			<div
+				class="active-indicator"
+				in:scale={{ duration: isPerformanceMode ? 0 : 200, start: 0.8 }}
+			>
 				<Icon name="play_circle" size={24} />
 			</div>
 		{/if}

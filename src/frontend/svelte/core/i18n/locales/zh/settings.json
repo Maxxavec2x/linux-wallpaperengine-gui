@@ -43,7 +43,11 @@
 		"scrollMask": "滚动遮罩效果",
 		"scrollMaskDesc": "在滚动区域的顶部和底部启用平滑淡入淡出效果。（注意：可能影响部分系统性能）",
 		"hideTrayLabel": "隐藏托盘标签",
-		"hideTrayLabelDesc": "在系统托盘中仅显示图标，隐藏\"Linux Wallpaper Engine\"文字。"
+		"hideTrayLabelDesc": "在系统托盘中仅显示图标，隐藏\"Linux Wallpaper Engine\"文字。",
+		"gridWarpAnimation": "[NYT_ZH] Grid Warp Animation",
+		"gridWarpAnimationDesc": "[NYT_ZH] Animate grid items smoothly when the layout wraps to new rows on resize or filter.",
+		"performanceMode": "[NYT_ZH] Performance Mode",
+		"performanceModeDesc": "[NYT_ZH] Disable heavy animations, shimmer effects, and backdrop blur for better performance."
 	},
 	"generalScaling": {
 		"default": "默认",

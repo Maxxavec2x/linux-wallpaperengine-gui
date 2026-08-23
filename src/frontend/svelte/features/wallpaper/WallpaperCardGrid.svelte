@@ -5,6 +5,7 @@
 	import Icon from '@/ui/Icon.svelte';
 	import { subscribe } from '@/features/workshop/scripts/workshop';
 	import DownloadedBadge from './DownloadedBadge.svelte';
+	import { settingsStore } from '@/features/settings/scripts/settings';
 	import { getNextLoadOrder } from './scripts/imageLoadStagger';
 
 	interface Props {
@@ -68,8 +69,13 @@
 		}
 	});
 
+	let isPerformanceMode = $derived(!!$settingsStore?.performanceMode);
 	let staggerDelay = $derived(
-		loadOrder !== null ? (loadOrder % 12) * 35 : (index % 10) * 20
+		isPerformanceMode
+			? 0
+			: loadOrder !== null
+				? (loadOrder % 12) * 35
+				: (index % 10) * 20
 	);
 </script>
 
@@ -87,7 +93,7 @@
 >
 	<div class="preview-container">
 		{#if wallpaper.previewPath}
-			{#if !loaded && !errored}
+			{#if !loaded && !errored && !isPerformanceMode}
 				<div class="skeleton" out:fade={{ duration: 220 }}></div>
 			{/if}
 			<img
@@ -102,7 +108,7 @@
 				style="transition-delay: {staggerDelay}ms"
 			/>
 			{#if errored}
-				<div class="error-fallback" in:fade={{ duration: 180 }}>
+				<div class="error-fallback" in:fade={{ duration: isPerformanceMode ? 0 : 180 }}>
 					<Icon name="broken_image" size={36} />
 				</div>
 			{/if}
@@ -124,11 +130,11 @@
 		{/if}
 
 		{#if isWorkshopItem && isDownloading && !isDownloaded}
-			<div class="progress-overlay" in:fade>
+			<div class="progress-overlay" in:fade={{ duration: isPerformanceMode ? 0 : 200 }}>
 				<div class="wave-bg" style="height: {percent}%"></div>
 				<div class="pct-text">
 					{#if percent === 0}
-						<div in:scale>
+						<div in:scale={{ duration: isPerformanceMode ? 0 : 200, start: 0.8 }}>
 							<Icon name="hourglass_empty" size={32} />
 						</div>
 					{:else}
@@ -148,7 +154,7 @@
 				class="download-btn"
 				onclick={(e) => { e.stopPropagation(); subscribe(folderName); }}
 				onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); subscribe(folderName); } }}
-				in:fly={{ y: 8, duration: 300, easing: backOut }}
+				in:fly={{ y: 8, duration: isPerformanceMode ? 0 : 300, easing: backOut }}
 			>
 				<Icon name="download" size={18} />
 			</div>
@@ -164,7 +170,11 @@
 		height: 170px;
 		border-radius: 15px;
 		background: var(--item-bg-translucent);
-		transition: all 0.2s ease-out;
+		transition:
+			border-color 0.2s ease-out,
+			box-shadow 0.2s ease-out,
+			background 0.2s ease-out,
+			transform 0.2s ease-out;
 		cursor: pointer;
 		border: 3px solid transparent;
 		overflow: hidden;
