@@ -44,10 +44,10 @@
 		"scrollMaskDesc": "เปิดเอฟเฟกต์เฟดที่ด้านบนและล่างของพื้นที่เลื่อน (หมายเหตุ: อาจกระทบประสิทธิภาพในบางระบบ)",
 		"hideTrayLabel": "ซ่อนข้อความในถาดระบบ",
 		"hideTrayLabelDesc": "แสดงเฉพาะไอคอนในถาดระบบ และซ่อนข้อความ “Linux Wallpaper Engine”",
-		"gridWarpAnimation": "[NYT_TH] Grid Warp Animation",
-		"gridWarpAnimationDesc": "[NYT_TH] Animate grid items smoothly when the layout wraps to new rows on resize or filter.",
-		"performanceMode": "[NYT_TH] Performance Mode",
-		"performanceModeDesc": "[NYT_TH] Disable heavy animations, shimmer effects, and backdrop blur for better performance."
+		"gridWarpAnimation": "แอนิเมชันวาร์ปกริด",
+		"gridWarpAnimationDesc": "ทำให้กริดเคลื่อนไหวอย่างนุ่มนวลเมื่อมีการตัดขึ้นบรรทัดใหม่จากการปรับขนาดหรือการกรอง",
+		"performanceMode": "โหมดประสิทธิภาพ",
+		"performanceModeDesc": "ปิดแอนิเมชันหนัก เอฟเฟกต์ชิมเมอร์ และการเบลอพื้นหลังเพื่อประสิทธิภาพที่ดีขึ้น"
 	},
 	"generalScaling": {
 		"default": "ค่าเริ่มต้น",
