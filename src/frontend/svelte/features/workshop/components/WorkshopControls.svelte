@@ -129,6 +129,17 @@
 		.search-input-wrap {
 			flex: 1;
 			max-width: 300px;
+
+			:global(.input-wrapper input) {
+				padding: 8px 12px;
+				height: 36px;
+				box-sizing: border-box;
+			}
+		}
+
+		:global(.btn) {
+			height: 36px;
+			box-sizing: border-box;
 		}
 	}
 
@@ -149,6 +160,12 @@
 				white-space: nowrap;
 			}
 		}
+
+		:global(.select-trigger) {
+			padding: 8px 12px;
+			height: 36px;
+			box-sizing: border-box;
+		}
 	}
 
 	.right-actions {
@@ -168,6 +185,12 @@
 
 		.mode-toggle-wrap {
 			margin-right: 10px;
+
+			:global(.capsule-container) {
+				height: 36px;
+				box-sizing: border-box;
+				padding: 3px;
+			}
 		}
 
 		.toggle-wrap {

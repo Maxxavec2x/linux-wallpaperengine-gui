@@ -90,7 +90,7 @@
 	.left-buttons-wrap {
 		display: flex;
 		align-items: center;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		flex-grow: 1;
 		min-width: 0;
 		gap: 8px;
@@ -105,6 +105,23 @@
 	:global(.refresh .btn) {
 		height: 36px;
 		box-sizing: border-box;
+	}
+
+	@media (max-width: 900px) {
+		:global(.toolbar) {
+			flex-wrap: wrap;
+		}
+
+		.refresh-modes-container {
+			width: 100%;
+			justify-content: flex-end;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.left-buttons-wrap {
+			flex-wrap: wrap;
+		}
 	}
 
 	.refresh-modes-container {

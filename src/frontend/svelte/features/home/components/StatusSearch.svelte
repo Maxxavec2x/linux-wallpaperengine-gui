@@ -155,8 +155,8 @@
 	.status-search {
 		display: grid;
 		align-items: center;
-		flex: 1 1 280px;
-		min-width: 200px;
+		flex: 1 1 180px;
+		min-width: 120px;
 		height: 36px;
 		padding: 0 12px;
 		box-sizing: border-box;

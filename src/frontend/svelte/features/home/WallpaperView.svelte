@@ -175,4 +175,10 @@
 	.display-manager-wrapper {
 		width: 100%;
 	}
+
+	@media (max-width: 900px) {
+		:global(.sidebar-shell) {
+			display: none !important;
+		}
+	}
 </style>
