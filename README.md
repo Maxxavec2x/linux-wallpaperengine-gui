@@ -187,6 +187,8 @@ Run with hot-reloading:
 ```bash
 bun run dev
 ```
+## USING NIX
+With Nix installed, run `nix develop` for a shell with the required dependencies, or `direnv allow` if you use direnv.
 
 ## STONKS!
 
