@@ -26,6 +26,8 @@
             pkg-config
             libayatana-appindicator
             gtk3
+
+            golangci-lint
           ];
 
           shellHook = ''
