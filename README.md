@@ -185,13 +185,16 @@ bun run dev
 ```
 
 ## USING NIX FLAKES
-If you use [Nix](https://nixos.org/), this repository provides a `flake.nix` with a development shell containing all the requirements above (`go`, `bun`, `pkg-config`, `gtk3`, `libayatana-appindicator`), so you don't need to install anything manually.
+If you use [Nix](https://nixos.org/), this repository provides a `flake.nix` with a development shell containing all the requirements above (`go`, `bun`, `pkg-config`, `gtk3`, `libayatana-appindicator`), plus `golangci-lint` for bun run check, so you don't need to install anything manually.
 
 **With Nix installed:**
 ```bash
 nix develop
 ```
-This drops you into a shell with all the dependencies from **Requirements** above — continue with `bun install`, `bun run build`, or `bun run dev` as normal.
+This drops you into a shell with all the dependencies from **Requirements** above, continue with `bun install`, `bun run build`, or `bun run dev` as normal.
+
+> [!NOTE]
+> `bun run build:all` currently fails on NixOS under the Nix devShell due to a known NixOS limitation with generic dynamically-linked binaries downloaded by electron-builder (see https://nix.dev/permalink/stub-ld). `bun run build` works fine.
 
 **With [direnv](https://direnv.net/) installed:**
 ```bash
